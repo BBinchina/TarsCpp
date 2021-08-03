@@ -43,12 +43,13 @@ struct epoll_event
     epoll_data_t data; /* User data variable */
 };
 
+//内核创建一个eventpoll对象，和socket一样，它也会有等待队列
 epoll_t epoll_create(int);
 
 int epoll_close(epoll_t epoll_hnd);
-
+// 添加对sock的监视，内核会将socke添加到eventpoll的等待队列中
 int epoll_ctl(epoll_t epoll_hnd, int op, SOCKET sock, struct epoll_event *event);
-
+// 当前进程绑定到事件的触发事件中
 int epoll_wait(epoll_t epoll_hnd, struct epoll_event *events, int maxevents, int timeout);
 
 #endif /* EPOLL_H_ */

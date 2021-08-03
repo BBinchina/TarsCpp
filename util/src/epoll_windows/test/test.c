@@ -18,13 +18,16 @@ int main(int argc, char* argv[]) {
   WSADATA wsa_data;
   int r;
   u_long one = 1;
+  //addrinfo 解析hostname时使用
   struct addrinfo hints;
   struct addrinfo* addrinfo;
+  //socket套接字内容
   struct sockaddr_in addr, bind_addr;
   DWORD ticks_start, ticks_last;
   long long pings = 0, pings_sent = 0;
   int i;
 
+  //创建epoll句柄
   epoll_hnd = epoll_create();
   assert(epoll_hnd && epoll_hnd != INVALID_HANDLE_VALUE);
 
@@ -32,6 +35,7 @@ int main(int argc, char* argv[]) {
   hints.ai_family = AF_INET;
   hints.ai_protocol = IPPROTO_IP;
 
+  //
   r = getaddrinfo("localhost", NULL, &hints, &addrinfo);
   assert(r == 0);
   assert(addrinfo->ai_addrlen <= sizeof addr);
