@@ -49,7 +49,9 @@ struct epoll_sock_data_t
 class epoll_port_data_t
 {
 protected:
+    //iocp io完成端口
     HANDLE _iocp;
+
     SOCKET _peer_sockets[ARRAY_COUNT(AFD_PROVIDER_IDS)];
     unordered_map<int, epoll_sock_data_t *> _sock_data_tree;
     unordered_set<epoll_sock_data_t *> _attn_list;
@@ -209,7 +211,13 @@ int epoll_sock_data_t::submit()
 //////////////////////////////////////////////////////////////////////
 epoll_port_data_t::epoll_port_data_t()
 {
+    //创建输入/输出（I / O）完成端口并将其与指定的文件句柄相关联，或创建尚未与文件句柄相关联的I / O完成端口，从而允许以后进行关联。
+    //1、传入无效句柄，该函数将创建一个IO完成端口
+    //2、 null 现有io完成端口为null，即将创建一个新的io完成端口
+    //3、0 句柄定义的完成密钥
+    //4、 0 系统允许的并发运行线程数与系统中的处理器数量一样
     _iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
+    //创建失败
     if (_iocp == INVALID_HANDLE_VALUE)
     {
         return;
@@ -560,6 +568,7 @@ epoll_t epoll_create(int size)
         epoll__initialized = 1;
     }
 
+    //创建一个iocp
     epoll_port_data_t *port_data = new epoll_port_data_t();
     if (port_data == NULL)
     {
